@@ -179,7 +179,7 @@ fn main() {
         target.draw(&vertex_buffer,
                     &index_buffer,
                     &program,
-                    &uniform! {size: [x as f32, y as f32], center: [cx, cy], zoom: (-10. + (110.*zoom/99.)).exp() as f32, t: duration.elapsed().as_secs_f32(), max_iter: max_iter, order: order},
+                    &uniform! {size: [x as f32, y as f32], center: [cx, cy], zoom: (-5. + (6.*zoom/20.)).exp() as f32, t: duration.elapsed().as_secs_f32(), max_iter: max_iter, order: order},
       &Default::default()
             ).unwrap();
         target.finish().unwrap();
