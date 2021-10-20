@@ -41,7 +41,14 @@ fn main() {
     let vertex_buffer = glium::VertexBuffer::new(&display, &vertices).unwrap();
 
     let index_buffer = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
-
+    
+    let (mut cx, mut cy) = (0.0, 0.0);
+    let mut mouse_position: Option<(i32, i32)> = None;
+    let mut zoom = 1.0;
+    let mut order = 5;
+    let mut max_iter = 60;
+    
+    let duration = std::time::Instant::now();
 
     events_loop.run(move |event, _, control_flow|{
 
@@ -55,14 +62,112 @@ fn main() {
                     *control_flow = glium::glutin::event_loop::ControlFlow::Exit;
                     return;
                 },
+                glium::glutin::event::WindowEvent::MouseWheel{delta, ..} => match delta {
+                        glium::glutin::event::MouseScrollDelta::LineDelta(x, y) => {
+                            zoom += y;
+                            return;
+                        }
+                        glium::glutin::event::MouseScrollDelta::PixelDelta(x) => {
+                            zoom += x.y as f32;
+                            return;
+                        }
+                },
+                glutin::event::WindowEvent::CursorMoved { position, .. } => {
+                    mouse_position = Some(position.cast::<i32>().into());
+                    return;
+                },
+                glium::glutin::event::WindowEvent::MouseInput{state, button, ..} => match button{
+                    glium::glutin::event::MouseButton::Left => {
+                        if state == glium::glutin::event::ElementState::Pressed {
+                            if let Some(position) = mouse_position{
+                                cx += (position.0 as f32 - display.get_framebuffer_dimensions().0 as f32 / 2.)*zoom;// * zoom;
+                                cy += (display.get_framebuffer_dimensions().1 as f32/2. - position.1 as f32)*zoom;// * zoom;
+                            }
+                        }
+                    }
+                    _ => return,
+                },
+                glium::glutin::event::WindowEvent::KeyboardInput{input, ..} => {
+                    if let Some(key) = input.virtual_keycode{
+                        match key {
+                            glutin::event::VirtualKeyCode::Key1 => {
+                                order = 1;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key2 => {
+                                order = 2;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key3 => {
+                                order = 3;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key4 => {
+                                order = 4;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key5 => {
+                                order = 5;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key6 => {
+                                order = 6;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key7 => {
+                                order = 7;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key8 => {
+                                order = 8;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key9 => {
+                                order = 9;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key0 => {
+                                order = 10;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::F1 => {
+                                max_iter = 1;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::F2 => {
+                                max_iter = 10;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::F3 => {
+                                max_iter = 30;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::F4 => {
+                                max_iter = 60;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::F5 => {
+                                max_iter = 120;
+                                return;
+                            },
+                            _ => return,
+                        }
+                    }
+                    return;
+                },
                 _ => return,
             },
+            
             glium::glutin::event::Event::NewEvents(cause) => match cause {
                 glium::glutin::event::StartCause::ResumeTimeReached { .. } => (),
                 glium::glutin::event::StartCause::Init => (),
                 _ => return,
             },
             _ => return,
+        }
+
+        if zoom < 0.0 {
+            zoom = 0.0;
         }
 
         let (x, y) = display.get_framebuffer_dimensions();
@@ -74,7 +179,7 @@ fn main() {
         target.draw(&vertex_buffer,
                     &index_buffer,
                     &program,
-                    &uniform! {size: [x as f32, y as f32]},
+                    &uniform! {size: [x as f32, y as f32], center: [cx, cy], zoom: (-10. + (110.*zoom/99.)).exp() as f32, t: duration.elapsed().as_secs_f32(), max_iter: max_iter, order: order},
       &Default::default()
             ).unwrap();
         target.finish().unwrap();
