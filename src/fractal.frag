@@ -26,36 +26,50 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 
-vec2 polynomial(vec2 p, int order){
+vec2 function(vec2 p, int o){
     vec2 poly = -vec2(1.0, 0.0);
-    for(int i = 1; i <= order; ++i){
+    for(int i = 1; i <= o; ++i){
         poly += power(p, i);
     }
     return poly;
 }
 
-vec2 derivative(vec2 p, int order){
+vec2 derivative(vec2 p, int o){
     vec2 derivative = vec2(0.0, 0.0);
-    for(int i = 1; i < order; ++i){
+    for(int i = 1; i < o; ++i){
         derivative += product(vec2(i+1,0.0), power(p, i));
     }
     return derivative;
 }
+
+// vec2 function(vec2 p, int o){
+//     return power(p, o) - vec2(o, 0.);
+// }
+
+// vec2 derivative(vec2 p, int o){
+//     return product(vec2(o, 0.0), power(p, o-1));
+// }
 
 void main()
 {
     float aspectRatio = size.x/size.y;
     vec2 p = vec2(v_pos.x*size.x/2., v_pos.y*size.y/2.);
     p = p*zoom;
-    vec2 r = vec2(0.7, 0.7)+0.5*sin(t) - order/10.;
+    vec2 r = vec2(0.7, 0.7)+0.5*sin(t);
 
     float j = max_iter;
     for(int i = 0; i < max_iter; i++){
         vec2 last_p = p;
-        p = p - product(r, divide(polynomial(p, order), derivative(p, order)));
+        p = p - product(r, divide(function(p, order), derivative(p, order)));
+
+        if(distance(p, last_p) < EPSILON){
+            j = i;
+            break;
+        }
+
     }
     float theta = atan(p.y, p.x + 0.000000001);
     float thetaNorm = (PI + theta) / (2.*PI);
 
-    f_color = vec4(hsv2rgb(vec3(thetaNorm, 1.0, 1.0) +.1), 1.0);
+    f_color = vec4(hsv2rgb(vec3(thetaNorm, 1.0, 1.0) +.1), 1.0 - j/max_iter);
 }
