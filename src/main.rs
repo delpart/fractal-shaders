@@ -81,8 +81,8 @@ fn main() {
                     glium::glutin::event::MouseButton::Left => {
                         if state == glium::glutin::event::ElementState::Pressed {
                             if let Some(position) = mouse_position{
-                                cx += (position.0 as f32 - display.get_framebuffer_dimensions().0 as f32 / 2.)*zoom;// * zoom;
-                                cy += (display.get_framebuffer_dimensions().1 as f32/2. - position.1 as f32)*zoom;// * zoom;
+                                cx += (position.0 as f32 - display.get_framebuffer_dimensions().0 as f32 / 2.)*zoom;
+                                cy += (display.get_framebuffer_dimensions().1 as f32/2. - position.1 as f32)*zoom;
                             }
                         }
                     },
@@ -165,10 +165,6 @@ fn main() {
                 _ => return,
             },
             _ => return,
-        }
-
-        if zoom_step < 0.0 {
-            zoom_step = 0.0;
         }
 
         zoom = (-10. + (20.*zoom_step/20.)).exp();
