@@ -167,7 +167,7 @@ fn main() {
             _ => return,
         }
 
-        zoom = (-10. + (20.*zoom_step/20.)).exp();
+        zoom = (zoom_step/5.).exp();
 
         let (x, y) = display.get_framebuffer_dimensions();
 
