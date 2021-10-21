@@ -68,7 +68,7 @@ void main()
         }
 
     }
-    float theta = atan(p.y, p.x + 0.000000001);
+    float theta = atan(p.y, p.x);
     float thetaNorm = (PI + theta) / (2.*PI);
 
     f_color = vec4(hsv2rgb(vec3(thetaNorm, 1.0, 1.0) +.1), 1.0 - j/max_iter);
