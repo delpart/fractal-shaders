@@ -54,7 +54,7 @@ void main()
 {
     float aspectRatio = size.x/size.y;
     vec2 p = vec2(v_pos.x*size.x/2., v_pos.y*size.y/2.);
-    p = p*zoom;
+    p = p*zoom + center;
     vec2 r = vec2(0.7, 0.7)+0.5*sin(t);
 
     float j = max_iter;

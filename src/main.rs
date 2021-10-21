@@ -44,6 +44,7 @@ fn main() {
     
     let (mut cx, mut cy) = (0.0, 0.0);
     let mut mouse_position: Option<(i32, i32)> = None;
+    let mut zoom_step = 1.0;
     let mut zoom = 1.0;
     let mut order = 5;
     let mut max_iter = 60;
@@ -63,12 +64,12 @@ fn main() {
                     return;
                 },
                 glium::glutin::event::WindowEvent::MouseWheel{delta, ..} => match delta {
-                        glium::glutin::event::MouseScrollDelta::LineDelta(x, y) => {
-                            zoom += y;
+                        glium::glutin::event::MouseScrollDelta::LineDelta(_x, y) => {
+                            zoom_step += y;
                             return;
                         }
                         glium::glutin::event::MouseScrollDelta::PixelDelta(x) => {
-                            zoom += x.y as f32;
+                            zoom_step += x.y as f32;
                             return;
                         }
                 },
@@ -84,7 +85,7 @@ fn main() {
                                 cy += (display.get_framebuffer_dimensions().1 as f32/2. - position.1 as f32)*zoom;// * zoom;
                             }
                         }
-                    }
+                    },
                     _ => return,
                 },
                 glium::glutin::event::WindowEvent::KeyboardInput{input, ..} => {
@@ -166,9 +167,11 @@ fn main() {
             _ => return,
         }
 
-        if zoom < 0.0 {
-            zoom = 0.0;
+        if zoom_step < 0.0 {
+            zoom_step = 0.0;
         }
+
+        zoom = (-10. + (20.*zoom_step/20.)).exp();
 
         let (x, y) = display.get_framebuffer_dimensions();
 
@@ -179,7 +182,7 @@ fn main() {
         target.draw(&vertex_buffer,
                     &index_buffer,
                     &program,
-                    &uniform! {size: [x as f32, y as f32], center: [cx, cy], zoom: (-5. + (6.*zoom/20.)).exp() as f32, t: duration.elapsed().as_secs_f32(), max_iter: max_iter, order: order},
+                    &uniform! {size: [x as f32, y as f32], center: [cx, cy], zoom: zoom as f32, t: duration.elapsed().as_secs_f32(), max_iter: max_iter, order: order},
       &Default::default()
             ).unwrap();
         target.finish().unwrap();
