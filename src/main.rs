@@ -92,43 +92,43 @@ fn main() {
                     if let Some(key) = input.virtual_keycode{
                         match key {
                             glutin::event::VirtualKeyCode::Key1 => {
-                                order = 1;
-                                return;
-                            },
-                            glutin::event::VirtualKeyCode::Key2 => {
                                 order = 2;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key3 => {
+                            glutin::event::VirtualKeyCode::Key2 => {
                                 order = 3;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key4 => {
+                            glutin::event::VirtualKeyCode::Key3 => {
                                 order = 4;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key5 => {
+                            glutin::event::VirtualKeyCode::Key4 => {
                                 order = 5;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key6 => {
+                            glutin::event::VirtualKeyCode::Key5 => {
                                 order = 6;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key7 => {
+                            glutin::event::VirtualKeyCode::Key6 => {
                                 order = 7;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key8 => {
+                            glutin::event::VirtualKeyCode::Key7 => {
                                 order = 8;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key9 => {
+                            glutin::event::VirtualKeyCode::Key8 => {
                                 order = 9;
                                 return;
                             },
-                            glutin::event::VirtualKeyCode::Key0 => {
+                            glutin::event::VirtualKeyCode::Key9 => {
                                 order = 10;
+                                return;
+                            },
+                            glutin::event::VirtualKeyCode::Key0 => {
+                                order = 11;
                                 return;
                             },
                             glutin::event::VirtualKeyCode::F1 => {
